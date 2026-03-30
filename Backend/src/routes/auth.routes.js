@@ -1,4 +1,4 @@
-const { Router } = require("express").Router();
+const { Router } = require("express");
 const authController = require("../controllers/auth.controllers");
 const authMiddleware = require("../middlewares/auth.middleware");
 
@@ -10,7 +10,7 @@ const authRouter = Router();
  * @access Public
  */
 
-authRouter.post("/register");
+authRouter.post("/register", authController.registerUserContrller);
 
 /**
  * @route POST /api/auth/login

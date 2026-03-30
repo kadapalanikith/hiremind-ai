@@ -1,6 +1,6 @@
 const userModel = require("../models/user.model");
 const bcrypt = require("bcryptjs");
-const tokenBlacklistModel = require("../models/tokenBlacklist.model");
+const tokenBlacklistModel = require("../models/blacklist.model");
 const jwt = require("jsonwebtoken");
 
 /**
@@ -42,7 +42,14 @@ async function registerUserContrller(req, res) {
 
   return res
     .status(201)
-    .json({ message: "User registered successfully", user });
+    .json({
+      message: "User registered successfully",
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+      }
+    });
 }
 
 /**
@@ -107,6 +114,10 @@ async function logoutUserContrller(req, res) {
  */
 async function getMeContrller(req, res) {
   const user = await userModel.findById(req.user.id).select("-password");
+
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
 
   return res.status(200).json({
     message: "User retrieved successfully",

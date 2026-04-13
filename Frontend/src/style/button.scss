@@ -1,20 +1,61 @@
-.button{
+.button {
     border: none;
     outline: none;
-    padding-inline: 1.5rem;
-    padding-block: 0.75rem;
-    border-radius: 1rem;
+    padding-inline: 1.75rem;
+    padding-block: 0.875rem;
+    border-radius: 0.75rem;
     margin-top: 12px;
     cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: 0.025em;
+    font-family: var(--font-body);
+    transition: var(--transition-normal);
+    position: relative;
+    overflow: hidden;
 
-    transition: all 0.3s ease-in-out;
-
-    &.primary-button{
-        background-color: #e1034d;
-        color: white;
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+        opacity: 0;
+        transition: opacity var(--transition-normal);
     }
 
-    &:active{
-        transform: scale(0.9);
+    &:hover::before {
+        opacity: 1;
+    }
+
+    &.primary {
+        background: var(--accent-gradient);
+        color: white;
+        box-shadow: 0 4px 15px rgba(0, 219, 222, 0.3);
+    }
+
+    &.primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(252, 0, 255, 0.4);
+        background: var(--accent-gradient-hover);
+    }
+
+    &.primary:active {
+        transform: translateY(1px);
+        box-shadow: 0 2px 10px rgba(0, 219, 222, 0.3);
+    }
+
+    &.glass {
+        background: var(--bg-glass);
+        color: var(--text-primary);
+        border: 1px solid var(--border-glass);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+
+    &.glass:hover {
+        background: var(--bg-glass-hover);
+        border-color: var(--accent-cyan);
+        box-shadow: var(--shadow-glow);
+        transform: translateY(-2px);
     }
 }

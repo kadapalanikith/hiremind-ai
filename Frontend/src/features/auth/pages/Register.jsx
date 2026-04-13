@@ -6,7 +6,7 @@ import { useAuth } from "../hooks/useAuth";
 const Register = () => {
   const navigate = useNavigate();
 
-  const [username, setusername] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -63,7 +63,7 @@ const Register = () => {
               placeholder="Enter Password"
             />
           </div>
-          <button className="button primary-button">Register</button>
+          <button className="button primary">Register</button>
         </form>
 
         <p>

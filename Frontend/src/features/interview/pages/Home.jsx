@@ -22,6 +22,17 @@ const Home = () => {
 
   }
 
+  if (loading) {
+    return (
+      <main className="loading-screen">
+        <h1>
+          Loading your interview plan
+        </h1>
+
+      </main>
+    )
+  }
+
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files.length > 0) {
       setFileName(e.target.files[0].name);

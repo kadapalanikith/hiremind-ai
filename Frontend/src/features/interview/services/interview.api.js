@@ -47,3 +47,14 @@ export const getAllInterviewReports = async() => {
     return response.data
 }
 
+/**
+ * @description
+ */
+
+export const generateResumePdf = async (interviewReportId) => { 
+    const response = await api.post(`/api/interview/resume/pdf/${interviewReportId}`)
+
+    return response.data
+}
+
+

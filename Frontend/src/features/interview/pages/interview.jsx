@@ -1,10 +1,28 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../style/interview.scss";
 import { useInterview } from "../hooks/useInterview";
+import { Navigate, useParams } from "react-router";
+import { generateResumePdf } from "../services/interview.api";
 
 const Interview = () => {
   const [activeTab, setActiveTab] = useState("technical");
-  const { report } = useInterview();
+  const { reports, getReportById, loading } = useInterview();
+  const { interviewId } = useParams();
+
+  useEffect(() => {
+    if (interviewId) {
+      getReportById(interviewId);
+    }
+  }, [interviewId]);
+
+  if (loading || !report) {
+    return (
+      <main className="loadind-screan">
+        <h1>Loading you interviewplan...</h1>
+      </main>
+    );
+  }
+
   return (
     <div className="interview-dashboard">
       <div className="dashboard-header-premium">
@@ -167,10 +185,29 @@ const Interview = () => {
                     <p>{item.idealAnswer}</p>
                   </div>
                 </div>
+                {/* Recent Reports List*/}
+                {reports.length > 0 && (
+                  <div className="recent-reports">
+                    <h2>My Recent Reports</h2>
+                    <ul className="reports-list">
+                      {reports.map((report) => (
+                        <li key={reports.id} className="" onClick={() => navigate(`/interview/${reports.id}`)}>
+                          <h3>{reports.title || 'untitled Position'}</h3>
+                          <p className="report-meta">Generated on{ new Date(reports.createdAt).toLocaleDateString()}</p>
+                          <p className={`match-score ${report.matchScore >= 80 ? 'High' : 'Low'}`}>{`Match Score: ${report.matchScore}%`}</p>
+                        </li>
+                      ))}
+                    </ul>
+                  </div> 
+                )
+                }
 
                 <div className="feedback-section">
                   <h4>AI Feedback & Improvements</h4>
                   <p>{item.feedback}</p>
+                  <button className="button-primary button" onClick={()=>{getResumePdf(interviewId)}}>
+                    Download AI Generated Resume
+                  </button>
                 </div>
               </div>
             ))}

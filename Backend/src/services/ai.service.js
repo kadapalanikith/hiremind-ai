@@ -1,6 +1,7 @@
 const { GoogleGenAI } = require("@google/genai");
 const { z } = require('zod')
 const { zodToJsonSchema } = require('zod-to-json-schema')
+const puppetter = require('puppeteer')
 
 
 const ai = new GoogleGenAI({
@@ -51,6 +52,51 @@ async function generateInterviewReport({ resume, selfDescription, jobDescription
 
 }
 
+async function generatePdfFromHtml(htmlContent) {
+    const browser = await puppetter.launch();
+    const page = await browser.newPage();
+
+    await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+
+    const pdfBuffer = await page.pdf({ format: "A4" })
+    
+    await browser.close();
+
+    return pdfBuffer;
+
+
+
+}
+
+async function generateResumePdf({ resume, selfDescription, jobDescription }) {
+    const resumePdfSchema = z.object({
+        html: z.string().describe("The HTML content of the resume which can be converted to any library likr puppetter")        
+    })
+    const prompt = `Generate the resume for a candidate based on the following information:
+    Resume: ${resume}
+    Self Description: ${selfDescription}
+    Job Description: ${jobDescription}
+    
+    The HTML should be professional, well-styled with CSS (inline or internal), and optimized for a clean PDF layout.`
+
+    const response = await ai.models.generateContent({
+        model: "gemini-3-flash-preview",
+        contents: [{ role: "user", parts: [{ text: prompt }] }],
+        generationConfig: {
+            responseMimeType: "application/json",
+            responseSchema: zodToJsonSchema(resumePdfSchema),
+        }
+    })
+
+    
+    const jsonContext = JSON.parse(response.text)
+    const pdfBuffer = await generatePdfFromHtml(jsonContext.html)
+
+    return pdfBuffer;
+
+}
+
 module.exports = {
-    generateInterviewReport
+    generateInterviewReport,
+    generateResumePdf
 }

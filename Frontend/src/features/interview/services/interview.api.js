@@ -10,10 +10,10 @@ const api = axios.create({
  * @description 
  */
 
-export const generateInterviewReport = async({ resumeFild, selfDescription, jobDescription }) => {
+export const generateInterviewReport = async({ resumeFile, selfDescription, jobDescription }) => {
     const formData = new FormData();
 
-    formData.append("resume", resumeFild);
+    formData.append("resume", resumeFile);
     formData.append("selfDescription", selfDescription);
     formData.append("jobDescription", jobDescription);
 
@@ -32,7 +32,7 @@ export const generateInterviewReport = async({ resumeFild, selfDescription, jobD
  */
 
 export const getInterviewReportById = async(interviewId) => { 
-    const response = await api.get(`/api/interview/report/${interviewId}`)
+    const response = await api.get(`/api/interview/${interviewId}`) // Fix route match (backend uses /:interviewId not /report/:id)
 
     return response.data
 }
@@ -52,9 +52,10 @@ export const getAllInterviewReports = async() => {
  */
 
 export const generateResumePdf = async (interviewReportId) => { 
-    const response = await api.post(`/api/interview/resume/pdf/${interviewReportId}`)
+    // Need to specify responseType to appropriately parse the binary blob
+    const response = await api.post(`/api/interview/resume/pdf/${interviewReportId}`, {}, {
+        responseType: 'blob'
+    })
 
     return response.data
 }
-
-

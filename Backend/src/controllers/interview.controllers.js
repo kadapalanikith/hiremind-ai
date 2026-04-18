@@ -92,4 +92,4 @@ async function generateResumePdfController(req, res) {
     res.send(pdfBuffer)
 }
 
-module.exports = { generateInterviewReportController, getInterviewReportController, getAllInterviewReportsController }
+module.exports = { generateInterviewReportController, getInterviewReportController, getAllInterviewReportsController, generateResumePdfController }

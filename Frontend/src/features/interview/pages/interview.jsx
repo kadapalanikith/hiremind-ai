@@ -79,25 +79,58 @@ const RecentIcon = () => (
 
 const Interview = () => {
   const [activeTab, setActiveTab] = useState("technical");
-  const { report, reports, getReportById, getReports, getResumePdf, loading } = useInterview();
+  const { report, reports, getReportById, getReports, getResumePdf } = useInterview();
   const { interviewId } = useParams();
   const navigate = useNavigate();
+  const [isInitializing, setIsInitializing] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (interviewId) getReportById(interviewId);
+    const loadData = async () => {
+      try {
+        setIsInitializing(true);
+        setError(null);
+        if (interviewId) {
+          await getReportById(interviewId);
+        } else {
+          setError("No report ID provided.");
+        }
+      } catch (err) {
+        console.error(err);
+        setError("Could not load the report. Please verify your connection or try again.");
+      } finally {
+        setIsInitializing(false);
+      }
+    };
+    loadData();
   }, [interviewId]);
 
   useEffect(() => {
     getReports();
   }, []);
 
-  if (loading || !report) {
+  if (isInitializing) {
     return (
       <main className="loading-screen">
         <div className="loading-icon"><BrainIcon /></div>
         <h1>Loading your report…</h1>
         <p>Pulling together your interview analysis</p>
         <div className="loading-bar" />
+      </main>
+    );
+  }
+
+  if (error || !report) {
+    return (
+      <main className="loading-screen" style={{ textAlign: "center", padding: "2rem" }}>
+        <div className="loading-icon" style={{ animation: "none", color: "#ef4444" }}>⚠️</div>
+        <h1 style={{ marginTop: "1rem" }}>Failed to Load Report</h1>
+        <p style={{ opacity: 0.8, maxWidth: "420px", margin: "0.5rem auto 1.5rem" }}>
+          {error || "The requested interview report could not be found, or the server connection failed."}
+        </p>
+        <button className="button primary" onClick={() => navigate("/")}>
+          Back to Dashboard
+        </button>
       </main>
     );
   }

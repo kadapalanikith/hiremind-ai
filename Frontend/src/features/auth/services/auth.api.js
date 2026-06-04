@@ -51,11 +51,10 @@ export async function logout() {
 
 export async function getMe() {
     try {
-        const response = await api.get('/api/auth/get-me', {
-            withCredentials: true
-        });
+        const response = await api.get('/api/auth/get-me');
         return response.data;
     } catch (error) {
-        console.log(error)
+        console.error('Error fetching user info:', error);
+        return null;
     }
 }

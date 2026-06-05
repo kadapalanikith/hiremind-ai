@@ -1,60 +1,21 @@
-import axios from 'axios';
-
-const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000',
-    withCredentials: true
-});
+import api from '../../../shared/api';
 
 export async function register({ username, email, password }) {
-
-    try {
-        const response = await api.post('/api/auth/register', {
-            username,
-            email,
-            password,
-        }, {
-            withCredentials: true
-        });
-        return response.data;
-    } catch (error) {
-        console.error('Registration error:', error);
-        throw error;
-    }
+    const response = await api.post('/api/auth/register', { username, email, password });
+    return response.data;
 }
 
 export async function login({ email, password }) {
-    try {
-        const response = await api.post('/api/auth/login', {
-            email,
-            password,
-        }, {
-            withCredentials: true
-        });
-        return response.data;
-    } catch (error) {
-        console.error('Login error:', error);
-        throw error;
-    }
+    const response = await api.post('/api/auth/login', { email, password });
+    return response.data;
 }
 
 export async function logout() {
-    try {
-        const response = await api.get('/api/auth/logout', {
-            withCredentials: true
-        });
-        return response.data;
-    } catch (error) {
-        console.error('Logout error:', error);
-        throw error;
-    }
+    const response = await api.post('/api/auth/logout');
+    return response.data;
 }
 
 export async function getMe() {
-    try {
-        const response = await api.get('/api/auth/get-me');
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching user info:', error);
-        return null;
-    }
+    const response = await api.get('/api/auth/me');
+    return response.data;
 }

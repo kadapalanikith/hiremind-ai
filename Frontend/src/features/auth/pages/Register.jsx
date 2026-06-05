@@ -13,27 +13,40 @@ const BrainIcon = () => (
 
 const Register = () => {
   const navigate = useNavigate();
+  const { handleRegister } = useAuth();
+
   const [username, setUsername] = useState("");
-  const [email, setEmail]       = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { loading, handleRegister } = useAuth();
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await handleRegister({ username, email, password });
-    navigate("/");
-  };
+    setError("");
 
-  if (loading) {
-    return (
-      <main className="loading-screen">
-        <div className="loading-icon"><BrainIcon /></div>
-        <h1>Creating your account…</h1>
-        <p>Setting up your workspace</p>
-        <div className="loading-bar" />
-      </main>
-    );
-  }
+    // Client-side validation
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
+    setSubmitting(true);
+    const result = await handleRegister({ username, email, password });
+
+    if (result.success) {
+      navigate("/dashboard");
+    } else {
+      setError(result.error);
+    }
+    setSubmitting(false);
+  };
 
   return (
     <main className="auth-page">
@@ -50,7 +63,16 @@ const Register = () => {
           <p>Join thousands of professionals landing their dream roles.</p>
         </div>
 
-        {/* Form */}
+        {/* Error message */}
+        {error && (
+          <div className="auth-error" role="alert">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            {error}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} style={{ marginTop: "2rem" }}>
           <div className="input-group">
             <label htmlFor="reg-username">Username</label>
@@ -59,8 +81,11 @@ const Register = () => {
               type="text"
               name="username"
               placeholder="e.g. alex_chen"
+              value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
+              autoComplete="username"
+              minLength={3}
             />
           </div>
 
@@ -71,8 +96,10 @@ const Register = () => {
               type="email"
               name="email"
               placeholder="you@example.com"
+              value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              autoComplete="email"
             />
           </div>
 
@@ -83,13 +110,35 @@ const Register = () => {
               type="password"
               name="password"
               placeholder="Minimum 8 characters"
+              value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              autoComplete="new-password"
+              minLength={8}
             />
           </div>
 
-          <button id="register-submit" type="submit" className="button primary auth-submit">
-            Get started
+          <div className="input-group">
+            <label htmlFor="reg-confirm-password">Confirm password</label>
+            <input
+              id="reg-confirm-password"
+              type="password"
+              name="confirmPassword"
+              placeholder="Re-enter your password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              autoComplete="new-password"
+            />
+          </div>
+
+          <button
+            id="register-submit"
+            type="submit"
+            className="button primary auth-submit"
+            disabled={submitting}
+          >
+            {submitting ? "Creating account…" : "Get started"}
           </button>
         </form>
 

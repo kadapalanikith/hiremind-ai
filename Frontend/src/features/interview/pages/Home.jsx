@@ -1,7 +1,8 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "../style/home.scss";
 import { useInterview } from "../hooks/useInterview";
-import { useNavigate } from "react-router";
+import { useAuth } from "../../auth/hooks/useAuth";
+import { useNavigate, Link } from "react-router";
 
 /* ── Icon helpers ── */
 const BrainIcon = () => (
@@ -46,24 +47,81 @@ const SparkIcon = () => (
   </svg>
 );
 
-/* ─────────────────────────────────────────────────────────── */
+const HistoryIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+  </svg>
+);
+
+const LogoutIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 7"/>
+    <line x1="21" y1="12" x2="9" y2="12"/>
+  </svg>
+);
 
 const Home = () => {
-  const { loading, generateReport } = useInterview();
+  const { loading, generateReport, getReports, reports } = useInterview();
+  const { user, handleLogout } = useAuth();
   const [jobDescription, setJobDescription] = useState("");
   const [selfDescription, setSelfDescription] = useState("");
   const [fileName, setFileName] = useState("");
+  const [formError, setFormError] = useState("");
   const resumeInputRef = useRef();
   const navigate = useNavigate();
 
+  // Load previous reports on mount
+  useEffect(() => {
+    getReports();
+  }, [getReports]);
+
   const handleFileChange = (e) => {
-    setFileName(e.target.files?.[0]?.name || "");
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.type !== 'application/pdf') {
+        setFormError("Only PDF files are accepted.");
+        e.target.value = "";
+        setFileName("");
+        return;
+      }
+      setFileName(file.name);
+      setFormError("");
+    } else {
+      setFileName("");
+    }
   };
 
   const handleGenerateReport = async () => {
-    const resumeFile = resumeInputRef.current.files[0];
-    const data = await generateReport({ jobDescription, selfDescription, resumeFile });
-    navigate(`/interview/${data._id}`);
+    setFormError("");
+
+    const resumeFile = resumeInputRef.current?.files[0];
+
+    // Validate required fields
+    if (!resumeFile) {
+      setFormError("Please upload your resume PDF.");
+      return;
+    }
+    if (!jobDescription.trim()) {
+      setFormError("Please paste the job description.");
+      return;
+    }
+
+    try {
+      const data = await generateReport({ jobDescription, selfDescription, resumeFile });
+      if (data?._id) {
+        navigate(`/interview/${data._id}`);
+      }
+    } catch {
+      // Error is already shown via toast in useInterview
+    }
+  };
+
+  const handleLogoutClick = async () => {
+    await handleLogout();
+    navigate("/login");
   };
 
   if (loading) {
@@ -81,11 +139,22 @@ const Home = () => {
     <div className="home">
       {/* ── Sticky Navbar ── */}
       <nav className="home-nav" role="navigation" aria-label="Main navigation">
-        <div className="nav-brand">
+        <Link to="/" className="nav-brand" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
           <div className="nav-brand-icon"><BrainIcon /></div>
           <span className="nav-brand-name">HireMind AI</span>
+        </Link>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <span className="nav-label">Welcome, {user?.username}</span>
+          <button
+            id="logout-btn"
+            className="nav-logout-btn"
+            onClick={handleLogoutClick}
+            aria-label="Logout"
+          >
+            <LogoutIcon />
+            Logout
+          </button>
         </div>
-        <span className="nav-label">Interview Preparation</span>
       </nav>
 
       {/* ── Hero ── */}
@@ -103,9 +172,15 @@ const Home = () => {
 
       {/* ── Input Section ── */}
       <section className="home-input-section" aria-label="Prepare your interview profile">
-        <div className="interview-input-group">
+        {/* Form error */}
+        {formError && (
+          <div className="form-error-banner" role="alert">
+            ⚠️ {formError}
+          </div>
+        )}
 
-          {/* Left — Job Description (larger) */}
+        <div className="interview-input-group">
+          {/* Left — Job Description */}
           <div className="panel-card">
             <div className="panel-header">
               <h2>
@@ -130,7 +205,7 @@ const Home = () => {
             {/* Resume Upload */}
             <div className="right-card">
               <span className="right-card-label">
-                Your Résumé <small>PDF or DOCX</small>
+                Your Résumé <small>PDF only</small>
               </span>
               <label className="file-upload-label" htmlFor="resume" aria-label="Upload résumé file">
                 <div className={`file-upload-zone ${fileName ? "has-file" : ""}`}>
@@ -138,6 +213,7 @@ const Home = () => {
                   <span className={`upload-text ${fileName ? "active" : ""}`}>
                     {fileName || "Drag & drop or click to upload"}
                   </span>
+                  {fileName && <span className="upload-subtext">PDF ready</span>}
                 </div>
                 <input
                   ref={resumeInputRef}
@@ -145,7 +221,7 @@ const Home = () => {
                   type="file"
                   id="resume"
                   name="resume"
-                  accept=".pdf,.doc,.docx"
+                  accept=".pdf,application/pdf"
                   onChange={handleFileChange}
                 />
               </label>
@@ -155,7 +231,7 @@ const Home = () => {
             <div className="right-card">
               <span className="right-card-label">
                 <span style={{ display: "flex", alignItems: "center", gap: "0.375rem" }}>
-                  <SelfIcon /> Self Description
+                  <SelfIcon /> Self Description <small>(optional)</small>
                 </span>
               </span>
               <textarea
@@ -178,7 +254,7 @@ const Home = () => {
                 id="generate-report-btn"
                 className="button primary btn-generate"
                 onClick={handleGenerateReport}
-                disabled={!jobDescription.trim()}
+                disabled={loading}
                 aria-label="Generate interview profile report"
               >
                 <SparkIcon />
@@ -187,6 +263,31 @@ const Home = () => {
             </div>
           </div>
         </div>
+
+        {/* ── Past Reports ── */}
+        {reports.length > 0 && (
+          <div className="past-reports-section">
+            <h2 className="past-reports-title">
+              <HistoryIcon /> Past Reports
+            </h2>
+            <div className="past-reports-grid">
+              {reports.map((r) => (
+                <button
+                  key={r._id}
+                  className="past-report-card"
+                  onClick={() => navigate(`/interview/${r._id}`)}
+                  aria-label={`View report: ${r.title || "Untitled Position"}`}
+                >
+                  <div className="prc-title">{r.title || "Untitled Position"}</div>
+                  <div className="prc-meta">{new Date(r.createdAt).toLocaleDateString()}</div>
+                  <span className={`prc-score ${(r.matchScore >= 80) ? "high" : r.matchScore >= 60 ? "medium" : "low"}`}>
+                    {r.matchScore}% match
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </section>
     </div>
   );

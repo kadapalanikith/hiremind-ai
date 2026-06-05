@@ -1,61 +1,44 @@
-import axios from "axios";
-
-const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000",
-    withCredentials: true,
-});
-
+import api from '../../../shared/api';
 
 /**
- * @description 
+ * Generate a new interview report by uploading resume PDF, self description, and job description
  */
-
-export const generateInterviewReport = async({ resumeFile, selfDescription, jobDescription }) => {
+export const generateInterviewReport = async ({ resumeFile, selfDescription, jobDescription }) => {
     const formData = new FormData();
-
     formData.append("resume", resumeFile);
-    formData.append("selfDescription", selfDescription);
+    formData.append("selfDescription", selfDescription || "");
     formData.append("jobDescription", jobDescription);
 
     const response = await api.post("/api/interview", formData, {
-        headers: {
-            "Content-Type": "multipart/form-data",
-        },
+        headers: { "Content-Type": "multipart/form-data" },
     });
-
     return response.data;
-
-}
-
-/**
- * @description
- */
-
-export const getInterviewReportById = async(interviewId) => { 
-    const response = await api.get(`/api/interview/${interviewId}`) // Fix route match (backend uses /:interviewId not /report/:id)
-
-    return response.data
-}
+};
 
 /**
- * @description
+ * Get a single interview report by ID
  */
-
-export const getAllInterviewReports = async() => {
-    const response = await api.get("/api/interview")
-
-    return response.data
-}
+export const getInterviewReportById = async (interviewId) => {
+    const response = await api.get(`/api/interview/${interviewId}`);
+    return response.data;
+};
 
 /**
- * @description
+ * Get all interview reports for the logged-in user
  */
+export const getAllInterviewReports = async () => {
+    const response = await api.get("/api/interview");
+    return response.data;
+};
 
-export const generateResumePdf = async (interviewReportId) => { 
-    // Need to specify responseType to appropriately parse the binary blob
-    const response = await api.post(`/api/interview/resume/pdf/${interviewReportId}`, {}, {
-        responseType: 'blob'
-    })
-
-    return response.data
-}
+/**
+ * Generate and download an AI-polished resume PDF
+ */
+export const generateResumePdf = async (interviewReportId) => {
+    const response = await api.post(
+        `/api/interview/resume/pdf/${interviewReportId}`,
+        {},
+        { responseType: 'blob' }
+    );
+    return response.data;
+};

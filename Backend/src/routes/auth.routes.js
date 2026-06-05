@@ -9,34 +9,27 @@ const authRouter = Router();
  * @description Register a new user
  * @access Public
  */
-
-authRouter.post("/register", authController.registerUserContrller);
+authRouter.post("/register", authController.registerUserController);
 
 /**
  * @route POST /api/auth/login
  * @description Login an existing user
  * @access Public
  */
-
-authRouter.post("/login", authController.loginUserContrller);
+authRouter.post("/login", authController.loginUserController);
 
 /**
- * @route GET /api/auth/logout
- * @description Clear token from user cookie and add it to the token blacklist
- * @access Public
+ * @route POST /api/auth/logout
+ * @description Clear token from user cookie and blacklist it
+ * @access Public (uses cookie if present)
  */
-
-authRouter.get("/logout", authController.logoutUserContrller);
+authRouter.post("/logout", authController.logoutUserController);
 
 /**
- * @route GET /api/auth/get-me
+ * @route GET /api/auth/me
  * @description Get the currently logged in user's information
  * @access Private
  */
-authRouter.get(
-  "/get-me",
-  authMiddleware.authUser,
-  authController.getMeContrller,
-);
+authRouter.get("/me", authMiddleware.authUser, authController.getMeController);
 
 module.exports = authRouter;

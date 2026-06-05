@@ -73,6 +73,24 @@
   }
 }
 
+/* ── Error Message ── */
+.auth-error {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(186, 26, 26, 0.08);
+  border: 1px solid rgba(186, 26, 26, 0.20);
+  color: var(--error);
+  font-size: var(--text-body-lg);
+  font-weight: 500;
+  padding: 0.875rem 1.125rem;
+  border-radius: var(--radius-md);
+  margin-top: 1.25rem;
+  animation: fadeInUp 0.3s var(--ease-out-expo) both;
+
+  svg { flex-shrink: 0; }
+}
+
 .auth-heading {
   margin-bottom: 0.5rem;
 

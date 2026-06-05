@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "../auth.form.scss";
 import { useNavigate, Link } from "react-router";
 import { useAuth } from "../hooks/useAuth";
@@ -12,28 +12,28 @@ const BrainIcon = () => (
 );
 
 const Login = () => {
-  const { loading, handleLogin } = useAuth();
+  const { handleLogin } = useAuth();
   const navigate = useNavigate();
 
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await handleLogin({ email, password });
-    navigate("/");
-  };
+    setError("");
+    setSubmitting(true);
 
-  if (loading) {
-    return (
-      <main className="loading-screen">
-        <div className="loading-icon"><BrainIcon /></div>
-        <h1>Signing you in…</h1>
-        <p>Preparing your workspace</p>
-        <div className="loading-bar" />
-      </main>
-    );
-  }
+    const result = await handleLogin({ email, password });
+
+    if (result.success) {
+      navigate("/dashboard");
+    } else {
+      setError(result.error);
+    }
+    setSubmitting(false);
+  };
 
   return (
     <main className="auth-page">
@@ -50,7 +50,16 @@ const Login = () => {
           <p>Sign in to continue your interview preparation.</p>
         </div>
 
-        {/* Form — push down with 2rem whitespace instead of a divider */}
+        {/* Error message */}
+        {error && (
+          <div className="auth-error" role="alert">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            {error}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} style={{ marginTop: "2rem" }}>
           <div className="input-group">
             <label htmlFor="login-email">Email address</label>
@@ -59,8 +68,10 @@ const Login = () => {
               type="email"
               name="email"
               placeholder="you@example.com"
+              value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              autoComplete="email"
             />
           </div>
 
@@ -71,13 +82,20 @@ const Login = () => {
               type="password"
               name="password"
               placeholder="••••••••"
+              value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              autoComplete="current-password"
             />
           </div>
 
-          <button id="login-submit" type="submit" className="button primary auth-submit">
-            Sign in
+          <button
+            id="login-submit"
+            type="submit"
+            className="button primary auth-submit"
+            disabled={submitting}
+          >
+            {submitting ? "Signing in…" : "Sign in"}
           </button>
         </form>
 

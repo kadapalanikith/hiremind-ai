@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../style/interview.scss";
 import { useInterview } from "../hooks/useInterview";
-import { useParams, useNavigate } from "react-router";
+import { useParams, useNavigate, Link } from "react-router";
 
 /* ── Icon helpers ── */
 const BrainIcon = () => (
@@ -15,8 +15,7 @@ const BrainIcon = () => (
 const ArrowLeft = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
     strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="19" y1="12" x2="5" y2="12"/>
-    <polyline points="12 19 5 12 12 5"/>
+    <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
   </svg>
 );
 
@@ -36,15 +35,14 @@ const PlanIcon = () => (
   </svg>
 );
 
-const UserIcon = () => (
+const IntentionIcon = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
     strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-    <circle cx="12" cy="7" r="4"/>
+    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
   </svg>
 );
 
-const CheckIcon = () => (
+const AnswerIcon = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
     strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
     <polyline points="20 6 9 17 4 12"/>
@@ -62,16 +60,21 @@ const DownloadIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
     strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-    <polyline points="7 10 12 15 17 10"/>
-    <line x1="12" y1="15" x2="12" y2="3"/>
+    <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
   </svg>
 );
 
 const RecentIcon = () => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
     strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="10"/>
-    <polyline points="12 6 12 12 16 14"/>
+    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+  </svg>
+);
+
+const CheckIcon = () => (
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="20 6 9 17 4 12"/>
   </svg>
 );
 
@@ -95,19 +98,18 @@ const Interview = () => {
         } else {
           setError("No report ID provided.");
         }
-      } catch (err) {
-        console.error(err);
+      } catch {
         setError("Could not load the report. Please verify your connection or try again.");
       } finally {
         setIsInitializing(false);
       }
     };
     loadData();
-  }, [interviewId]);
+  }, [interviewId, getReportById]);
 
   useEffect(() => {
     getReports();
-  }, []);
+  }, [getReports]);
 
   if (isInitializing) {
     return (
@@ -123,28 +125,23 @@ const Interview = () => {
   if (error || !report) {
     return (
       <main className="loading-screen" style={{ textAlign: "center", padding: "2rem" }}>
-        <div className="loading-icon" style={{ animation: "none", color: "#ef4444" }}>⚠️</div>
+        <div className="loading-icon" style={{ animation: "none", background: "rgba(186,26,26,0.1)", color: "#ba1a1a" }}>⚠️</div>
         <h1 style={{ marginTop: "1rem" }}>Failed to Load Report</h1>
         <p style={{ opacity: 0.8, maxWidth: "420px", margin: "0.5rem auto 1.5rem" }}>
-          {error || "The requested interview report could not be found, or the server connection failed."}
+          {error || "The requested interview report could not be found."}
         </p>
-        <button className="button primary" onClick={() => navigate("/")}>
+        <button className="button primary" onClick={() => navigate("/dashboard")}>
           Back to Dashboard
         </button>
       </main>
     );
   }
 
+  // ── Current active questions (technical or behavioral) ──
   const questions =
     activeTab === "technical"
-      ? report.technicalQuestions ?? []
-      : report.behavioralQuestions ?? [];
-
-  const ratingClass = (rating = "") => rating.toLowerCase();
-
-  /* Plan progress: show step X / total */
-  const planTotal  = report.preparationPlan?.length ?? 1;
-  const planFill   = `${Math.round((1 / planTotal) * 100)}%`;
+      ? (report.technicalQuestions ?? [])
+      : (report.behavioralQuestions ?? []);
 
   const handleDownload = () => getResumePdf(interviewId);
 
@@ -152,16 +149,16 @@ const Interview = () => {
     <div className="interview-dashboard">
       {/* ── Navbar ── */}
       <nav className="dash-nav" role="navigation" aria-label="Dashboard navigation">
-        <div className="nav-brand">
+        <Link to="/" className="nav-brand" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
           <div className="nav-brand-icon"><BrainIcon /></div>
           <span className="nav-brand-name">HireMind AI</span>
-        </div>
+        </Link>
         <div className="nav-right">
           <button
             id="nav-back-btn"
             className="nav-back-btn"
-            onClick={() => navigate("/")}
-            aria-label="Return to home"
+            onClick={() => navigate("/dashboard")}
+            aria-label="Return to dashboard"
           >
             <ArrowLeft /> New analysis
           </button>
@@ -182,14 +179,14 @@ const Interview = () => {
         <header className="dash-header">
           <div className="dash-header-text">
             <div className="dash-chip insight-chip">✦ AI Interview Analysis</div>
-            <h1>Your Profile Report</h1>
+            <h1>{report.title || "Your Profile Report"}</h1>
             <p>
               Comprehensive breakdown of your fit, skill gaps, and a
               step-by-step preparation roadmap.
             </p>
           </div>
 
-          {/* Floating glass score ring */}
+          {/* Match Score Ring */}
           <div className="score-ring-wrapper" aria-label={`Match score: ${report.matchScore}%`}>
             <svg className="score-ring" viewBox="0 0 36 36">
               <path
@@ -212,27 +209,36 @@ const Interview = () => {
           {/* ─ Side Panel ─ */}
           <aside className="side-panel" aria-label="Side panel">
 
-            {/* Skill Gaps */}
+            {/* Skill Gaps — FIXED: was rendering gap directly, now gap.skill + gap.severity */}
             <div className="panel-card">
               <h3 className="panel-card-title">
                 <span className="card-title-icon"><GapIcon /></span>
                 Skill Gaps
               </h3>
               <div className="gap-tags" role="list" aria-label="Identified skill gaps">
+                {(report.skillGaps ?? []).length === 0 && (
+                  <p style={{ color: 'var(--on-surface-variant)', fontSize: 'var(--text-body-lg)' }}>No significant skill gaps identified.</p>
+                )}
                 {(report.skillGaps ?? []).map((gap, i) => (
-                  <span key={i} className="gap-tag" role="listitem">{gap}</span>
+                  <span
+                    key={i}
+                    className={`gap-tag gap-tag--${gap.severity}`}
+                    role="listitem"
+                    title={`Severity: ${gap.severity}`}
+                  >
+                    {gap.skill}
+                  </span>
                 ))}
               </div>
             </div>
 
-            {/* Preparation Plan */}
+            {/* Preparation Plan — FIXED: was step.title/description, now step.day/focus/tasks */}
             <div className="panel-card">
               <h3 className="panel-card-title">
                 <span className="card-title-icon"><PlanIcon /></span>
                 Preparation Plan
               </h3>
 
-              {/* Single fluid progress track — no segments */}
               <div className="plan-progress-bar" aria-label="Plan progress track">
                 <div
                   className="plan-progress-fill"
@@ -247,10 +253,17 @@ const Interview = () => {
                     className="timeline-item"
                     style={{ animationDelay: `${i * 0.07}s` }}
                   >
-                    <div className="step-bubble">{step.step ?? i + 1}</div>
+                    <div className="step-bubble">Day {step.day}</div>
                     <div className="step-body">
-                      <h4>{step.title}</h4>
-                      <p>{step.description}</p>
+                      <h4>{step.focus}</h4>
+                      {/* Render tasks array */}
+                      <ul className="step-tasks">
+                        {(step.tasks ?? []).map((task, j) => (
+                          <li key={j} className="step-task">
+                            <CheckIcon /> {task}
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   </div>
                 ))}
@@ -268,7 +281,7 @@ const Interview = () => {
                   {reports.map((r) => (
                     <li
                       key={r._id}
-                      className="report-list-item"
+                      className={`report-list-item ${r._id === interviewId ? "active" : ""}`}
                       role="button"
                       tabIndex={0}
                       onClick={() => navigate(`/interview/${r._id}`)}
@@ -281,7 +294,7 @@ const Interview = () => {
                       </p>
                       <span
                         className={`report-score ${
-                          r.matchScore >= 80 ? "high" : "low"
+                          r.matchScore >= 80 ? "high" : r.matchScore >= 60 ? "medium" : "low"
                         }`}
                       >
                         {r.matchScore}% match
@@ -306,16 +319,23 @@ const Interview = () => {
                   className={`tab-btn ${activeTab === tab ? "active" : ""}`}
                   onClick={() => setActiveTab(tab)}
                 >
-                  {tab === "technical" ? "Technical Questions" : "Behavioral Questions"}
+                  {tab === "technical"
+                    ? `Technical (${report.technicalQuestions?.length ?? 0})`
+                    : `Behavioral (${report.behavioralQuestions?.length ?? 0})`}
                 </button>
               ))}
             </div>
 
-            {/* Questions */}
+            {/* Questions — FIXED: renders question/intention/answer (actual schema fields) */}
             <div className="questions-list" role="tabpanel">
+              {questions.length === 0 && (
+                <div className="panel-card" style={{ textAlign: 'center', padding: '2rem' }}>
+                  <p>No {activeTab} questions available for this report.</p>
+                </div>
+              )}
               {questions.map((item, index) => (
                 <article
-                  key={item.id ?? index}
+                  key={index}
                   id={`question-${index + 1}`}
                   className="question-card animate-fade-in"
                   style={{ animationDelay: `${index * 0.08}s` }}
@@ -323,51 +343,37 @@ const Interview = () => {
                   {/* Header */}
                   <div className="q-header">
                     <h3 className="q-title">
-                      <span className="q-num">Q{item.id ?? index + 1}.</span>
+                      <span className="q-num">Q{index + 1}.</span>
                       {item.question}
                     </h3>
-                    <span
-                      className={`q-rating-chip ${ratingClass(item.rating)}`}
-                      aria-label={`Rating: ${item.rating}, score ${item.score}/100`}
-                    >
-                      {item.rating} · {item.score}/100
-                    </span>
                   </div>
 
-                  {/* Answer blocks */}
+                  {/* Answer blocks — FIXED: using actual schema fields (intention + answer) */}
                   <div className="q-body">
                     <div className="answer-block candidate">
                       <div className="block-label">
-                        <UserIcon /> Your Answer
+                        <IntentionIcon /> Interviewer's Intention
                       </div>
-                      <p>{item.candidateAnswer}</p>
+                      <p>{item.intention}</p>
                     </div>
                     <div className="answer-block ideal">
                       <div className="block-label">
-                        <CheckIcon /> Ideal Answer
+                        <AnswerIcon /> How to Answer
                       </div>
-                      <p>{item.idealAnswer}</p>
+                      <p>{item.answer}</p>
                     </div>
                   </div>
 
-                  {/* AI Feedback — Insight chip style */}
-                  <div className="feedback-block">
-                    <div className="feedback-label">
-                      <SparkIcon /> AI Feedback &amp; Improvements
-                    </div>
-                    <p>{item.feedback}</p>
-                  </div>
-
-                  {/* Per-card download */}
+                  {/* Download per-card */}
                   <div className="download-row">
                     <button
                       id={`download-resume-${index + 1}`}
                       className="button secondary"
-                      style={{ padding: "0.625rem 1.375rem", fontSize: "0.9375rem", marginTop: "0.5rem" }}
+                      style={{ padding: "0.5rem 1.125rem", fontSize: "0.9375rem", marginTop: "0.5rem" }}
                       onClick={handleDownload}
                       aria-label="Download AI generated resume"
                     >
-                      <DownloadIcon /> Download AI Résumé
+                      <SparkIcon /> Download AI Résumé
                     </button>
                   </div>
                 </article>

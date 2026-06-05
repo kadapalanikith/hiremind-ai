@@ -1,39 +1,30 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useState, useEffect } from 'react';
 import { getMe } from './services/auth.api';
 
 export const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => { 
+export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(true); // true until initial auth check done
 
     useEffect(() => {
         let isMounted = true;
         const initializeAuth = async () => {
             try {
                 const data = await getMe();
-                if (isMounted) {
-                    if (data && data.user) {
-                        setUser(data.user);
-                    } else {
-                        setUser(null);
-                    }
+                if (isMounted && data?.user) {
+                    setUser(data.user);
                 }
-            } catch (error) {
-                if (isMounted) {
-                    console.error("Initial authentication check failed:", error);
-                    setUser(null);
-                }
+            } catch {
+                // User is not authenticated — this is normal for public pages
+                if (isMounted) setUser(null);
             } finally {
-                if (isMounted) {
-                    setLoading(false);
-                }
+                if (isMounted) setLoading(false);
             }
         };
         initializeAuth();
-        return () => {
-            isMounted = false;
-        };
+        return () => { isMounted = false; };
     }, []);
 
     return (

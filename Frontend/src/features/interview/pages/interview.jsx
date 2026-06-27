@@ -151,7 +151,7 @@ const Interview = () => {
       <nav className="dash-nav" role="navigation" aria-label="Dashboard navigation">
         <Link to="/" className="nav-brand" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
           <div className="nav-brand-icon"><BrainIcon /></div>
-          <span className="nav-brand-name">HireMind AI</span>
+          <span className="nav-brand-name">TalentMind AI</span>
         </Link>
         <div className="nav-right">
           <button

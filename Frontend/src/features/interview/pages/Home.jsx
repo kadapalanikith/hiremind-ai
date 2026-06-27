@@ -141,7 +141,7 @@ const Home = () => {
       <nav className="home-nav" role="navigation" aria-label="Main navigation">
         <Link to="/" className="nav-brand" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
           <div className="nav-brand-icon"><BrainIcon /></div>
-          <span className="nav-brand-name">HireMind AI</span>
+          <span className="nav-brand-name">TalentMind AI</span>
         </Link>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <span className="nav-label">Welcome, {user?.username}</span>
@@ -165,7 +165,7 @@ const Home = () => {
           <span className="hero-gradient">deserve.</span>
         </h1>
         <p className="hero-sub">
-          Paste a job description, upload your résumé, and HireMind AI produces
+          Paste a job description, upload your résumé, and TalentMind AI produces
           a hyper-personalized interview preparation report in seconds.
         </p>
       </header>

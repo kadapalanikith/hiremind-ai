@@ -1,6 +1,6 @@
-# 🚀 HireMind AI Hosting Guide
+# 🚀 TalentMind AI Hosting Guide
 
-This guide provides step-by-step instructions to deploy **HireMind AI** (both Frontend and Backend) using **Vercel** for the client-side SPA, **Render** for the Express API, and **MongoDB Atlas** for the database.
+This guide provides step-by-step instructions to deploy **TalentMind AI** (both Frontend and Backend) using **Vercel** for the client-side SPA, **Render** for the Express API, and **MongoDB Atlas** for the database.
 
 ---
 
@@ -16,7 +16,7 @@ This guide provides step-by-step instructions to deploy **HireMind AI** (both Fr
 ## 🗄️ Step 1: Database Setup (MongoDB Atlas)
 
 1. Sign up or log in to [MongoDB Atlas](https://www.mongodb.com/cloud/atlas).
-2. Create a new project (e.g., `HireMind-AI`) and deploy a **Free M0 Cluster**.
+2. Create a new project (e.g., `TalentMind-AI`) and deploy a **Free M0 Cluster**.
 3. **Database Access**: Create a database user. Remember the username and password.
 4. **Network Access**: Add an IP address. For hosting environments (like Render), select **Allow Access from Anywhere** (`0.0.0.0/0`) since Render servers use dynamic IP addresses.
 5. **Get Connection URI**:
@@ -48,7 +48,7 @@ Render runs the Express server as a Web Service.
 2. Click **New +** and select **Web Service**.
 3. Connect your GitHub repository containing the project.
 4. Set the following details in the creation form:
-   - **Name**: `hiremind-ai-backend` (or similar)
+   - **Name**: `talentmind-ai-backend` (or similar)
    - **Environment**: `Node`
    - **Region**: Select a region close to your users (e.g., `Oregon (US West)` or `Frankfurt (EU Central)`)
    - **Branch**: `main` (or your primary branch)
@@ -67,7 +67,7 @@ In the Render Web Service dashboard, go to the **Variables** (or **Environment**
 | `MONGO_URI` | `mongodb+srv://...` | Your MongoDB Atlas connection string |
 | `GOOGLE_GENAI_API_KEY` | `AIzaSy...` | Your Google Gemini API Key |
 | `JWT_SECRET` | `your_long_random_jwt_secret` | A secure random string for JWT signatures |
-| `FRONTEND_URL` | `https://your-frontend-app.vercel.app` | **Your Vercel URL** (e.g., `https://hiremind-ai.vercel.app`). Update this after deploying to Vercel. |
+| `FRONTEND_URL` | `https://your-frontend-app.vercel.app` | **Your Vercel URL** (e.g., `https://talentmind-ai.vercel.app`). Update this after deploying to Vercel. |
 
 ### 3. Puppeteer Chrome Dependencies (⚠️ Render Specific)
 Puppeteer launches a headless Chrome browser to print resumes into PDF format. Because Render’s default Node environment lacks the system libraries required by Chrome, you must configure Render to install them:
@@ -93,7 +93,7 @@ Vercel is optimized for building and serving Vite/React SPAs.
 2. Click **Add New** and select **Project**.
 3. Import your GitHub repository.
 4. Set the following details:
-   - **Project Name**: `hiremind-ai`
+   - **Project Name**: `talentmind-ai`
    - **Framework Preset**: `Vite` (automatically detected)
    - **Root Directory**: Click *Edit* and select **Frontend** (⚠️ **CRITICAL**: This tells Vercel to build and run inside the Frontend folder)
    - **Build and Output Settings**: Leave as default (`npm run build` / `dist`)
@@ -103,7 +103,7 @@ Expand the **Environment Variables** section and add:
 
 | Key | Value | Description |
 |---|---|---|
-| `VITE_API_URL` | `https://hiremind-ai-backend.onrender.com` | **Your Render Web Service URL**. Copy the URL provided in your Render backend dashboard (e.g. `https://xxx.onrender.com`). |
+| `VITE_API_URL` | `https://talentmind-ai-backend.onrender.com` | **Your Render Web Service URL**. Copy the URL provided in your Render backend dashboard (e.g. `https://xxx.onrender.com`). |
 
 Click **Deploy**! Vercel will build the React client and serve it.
 

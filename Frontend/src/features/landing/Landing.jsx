@@ -95,7 +95,7 @@ const features = [
   {
     icon: <FileTextIcon />,
     title: "AI Resume Builder",
-    description: "HireMind AI rewrites and polishes your resume to match the target role, then generates a downloadable PDF.",
+    description: "TalentMind AI rewrites and polishes your resume to match the target role, then generates a downloadable PDF.",
     color: "secondary",
   },
   {
@@ -107,7 +107,7 @@ const features = [
 ];
 
 const steps = [
-  { num: "01", title: "Upload Your Resume", desc: "Drop your PDF resume into HireMind AI. Our parser extracts every detail." },
+  { num: "01", title: "Upload Your Resume", desc: "Drop your PDF resume into TalentMind AI. Our parser extracts every detail." },
   { num: "02", title: "Paste Job Description", desc: "Copy the target role's requirements. The more detail, the more precise your report." },
   { num: "03", title: "AI Analyzes Everything", desc: "Gemini AI cross-references your profile against the role across dozens of dimensions." },
   { num: "04", title: "Get Your Report", desc: "Receive a full dashboard: match score, interview questions, gaps, and a prep plan." },
@@ -137,7 +137,7 @@ const testimonials = [
 const faqs = [
   {
     q: "What file types are supported for resume upload?",
-    a: "HireMind AI accepts PDF files. Make sure your resume is a text-based PDF (not a scanned image) for best results."
+    a: "TalentMind AI accepts PDF files. Make sure your resume is a text-based PDF (not a scanned image) for best results."
   },
   {
     q: "How accurate is the match score?",
@@ -211,7 +211,7 @@ const Landing = () => {
         <div className="nav-inner">
           <Link to="/" className="nav-brand">
             <div className="brand-icon"><BrainIcon size={20} /></div>
-            <span className="brand-name">HireMind AI</span>
+            <span className="brand-name">TalentMind AI</span>
           </Link>
           <div className="nav-links">
             <a href="#features" className="nav-link">Features</a>
@@ -242,7 +242,7 @@ const Landing = () => {
             <span className="hero-gradient-text">Land the role you deserve.</span>
           </h1>
           <p className="hero-subheadline">
-            Upload your resume, paste a job description, and HireMind AI generates a hyper-personalized interview report in seconds — including match score, interview questions, skill gaps, and a day-by-day prep plan.
+            Upload your resume, paste a job description, and TalentMind AI generates a hyper-personalized interview report in seconds — including match score, interview questions, skill gaps, and a day-by-day prep plan.
           </p>
           <div className="hero-actions">
             <Link to="/register" id="hero-cta-primary" className="button primary hero-cta-btn">
@@ -296,7 +296,7 @@ const Landing = () => {
 
       {/* ── Social Proof Bar ── */}
       <section className="proof-bar" aria-label="Companies">
-        <p className="proof-label">Candidates have used HireMind AI to land roles at</p>
+        <p className="proof-label">Candidates have used TalentMind AI to land roles at</p>
         <div className="proof-companies">
           {["Google", "Stripe", "Notion", "Anthropic", "Linear", "Vercel", "OpenAI", "Meta"].map(c => (
             <span key={c} className="proof-company">{c}</span>
@@ -312,7 +312,7 @@ const Landing = () => {
             Everything you need to <span className="gradient-text">ace the interview</span>
           </h2>
           <p className="section-sub">
-            HireMind AI turns your resume and a job description into a complete, personalized interview preparation system.
+            TalentMind AI turns your resume and a job description into a complete, personalized interview preparation system.
           </p>
           <div className="features-grid">
             {features.map((f, i) => (
@@ -464,7 +464,7 @@ const Landing = () => {
             <span className="hero-gradient-text">one report away.</span>
           </h2>
           <p className="cta-sub">
-            Join thousands of professionals who've used HireMind AI to prepare with confidence and land roles they love.
+            Join thousands of professionals who've used TalentMind AI to prepare with confidence and land roles they love.
           </p>
           <Link to="/register" id="final-cta-btn" className="button primary cta-btn">
             Start for free — no credit card required <ArrowRight />
@@ -477,7 +477,7 @@ const Landing = () => {
         <div className="footer-inner">
           <div className="footer-brand">
             <div className="brand-icon brand-icon--sm"><BrainIcon size={18} /></div>
-            <span className="brand-name">HireMind AI</span>
+            <span className="brand-name">TalentMind AI</span>
           </div>
           <p className="footer-tagline">AI-powered interview preparation for ambitious professionals.</p>
           <div className="footer-links">
@@ -486,7 +486,7 @@ const Landing = () => {
             <a href="#features">Features</a>
             <a href="#pricing">Pricing</a>
           </div>
-          <p className="footer-copy">© {new Date().getFullYear()} HireMind AI. Built with Google Gemini.</p>
+          <p className="footer-copy">© {new Date().getFullYear()} TalentMind AI. Built with Google Gemini.</p>
         </div>
       </footer>
     </div>

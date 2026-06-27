@@ -54,7 +54,7 @@ const Register = () => {
         {/* Brand */}
         <div className="auth-brand">
           <div className="brand-icon"><BrainIcon /></div>
-          <span className="brand-name">HireMind AI</span>
+          <span className="brand-name">TalentMind AI</span>
         </div>
 
         {/* Heading */}

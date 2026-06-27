@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🧠 HireMind AI
+# 🧠 TalentMind AI
 
 ### *AI-Powered Interview Intelligence Platform*
 
@@ -11,7 +11,7 @@
 [![Vite](https://img.shields.io/badge/Vite-8.x-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vite.dev/)
 [![License: ISC](https://img.shields.io/badge/License-ISC-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/ISC)
 
-**Stop guessing. Start preparing. HireMind AI analyzes your resume against any job description and generates a complete, AI-powered interview readiness report — in seconds.**
+**Stop guessing. Start preparing. TalentMind AI analyzes your resume against any job description and generates a complete, AI-powered interview readiness report — in seconds.**
 
 [🚀 Get Started](#-getting-started) • [📖 API Reference](#-api-reference) • [🏗️ Architecture](#%EF%B8%8F-architecture) • [🖥️ Screenshots](#%EF%B8%8F-screenshots)
 
@@ -194,8 +194,8 @@ Make sure you have the following installed:
 ### 1️⃣ Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/hiremind-ai.git
-cd "hiremind-ai"
+git clone https://github.com/your-username/talentmind-ai.git
+cd "talentmind-ai"
 ```
 
 ---
@@ -212,7 +212,7 @@ Create a `.env` file inside the `Backend/` directory (see [Environment Variables
 ```bash
 # Backend/.env
 PORT=5000
-MONGO_URI=mongodb://localhost:27017/hiremind_ai
+MONGO_URI=mongodb://localhost:27017/talentmind_ai
 JWT_SECRET=your_super_secret_jwt_key_here
 GOOGLE_GENAI_API_KEY=your_google_genai_api_key_here
 ```
@@ -252,7 +252,7 @@ Navigate to **[http://localhost:5173](http://localhost:5173)** and create your f
 | Variable | Required | Description | Example |
 |---|---|---|---|
 | `PORT` | ✅ | Port for the Express server | `5000` |
-| `MONGO_URI` | ✅ | MongoDB connection string | `mongodb://localhost:27017/hiremind_ai` |
+| `MONGO_URI` | ✅ | MongoDB connection string | `mongodb://localhost:27017/talentmind_ai` |
 | `JWT_SECRET` | ✅ | Secret key for signing JWT tokens | `mySuperSecretKey123` |
 | `GOOGLE_GENAI_API_KEY` | ✅ | Google Gemini API key | `AIza...` |
 
@@ -451,7 +451,7 @@ User Registers/Logs In
 
 ## 🤖 AI Pipeline
 
-HireMind AI uses **Google Gemini** (`gemini-3-flash-preview`) with **structured JSON output** enforced via **Zod schemas** for deterministic, type-safe AI responses.
+TalentMind AI uses **Google Gemini** (`gemini-3-flash-preview`) with **structured JSON output** enforced via **Zod schemas** for deterministic, type-safe AI responses.
 
 ```
 User submits form (PDF + selfDescription + jobDescription)
